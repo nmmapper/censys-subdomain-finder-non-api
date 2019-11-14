@@ -4,8 +4,9 @@ Using censys to find subdomains but without the APIs. Censys is a a known servic
 [![N|Solid](https://www.nmmapper.com/static/img/logo.png)](https://www.nmmapper.com/sys/tools/subdomainfinder/)
 
 Part of this code is taken from theharvester as it currently uses the none api approach.
-[![theHarvester online](https://www.nmmapper.com/kalitools/theharvester/email-harvester-tool/online/)](https://travis-ci.org/joemccann/dillinger)
-[!theHarvester repo](https://github.com/laramies/theHarvester)
+[theHarvester online](https://www.nmmapper.com/kalitools/theharvester/email-harvester-tool/online/)
+
+[theHarvester repo](https://github.com/laramies/theHarvester)
 
 # Dependencies!
    - beautifulsoup4
