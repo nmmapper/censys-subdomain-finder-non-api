@@ -13,7 +13,7 @@ class Parser(object):
         self.urls = []
         self.numberofpageshosts = 0
         self.numberofpagescerts = 0
-        self.domain = resultstoparse.word
+        self.domain = resultstoparse.domain
 
     def search_hostnamesfromcerts(self):
         try:

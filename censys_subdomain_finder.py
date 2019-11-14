@@ -1,11 +1,16 @@
 import requests
-from mapper.lib.scanners.libtheharvester.theHarvester.parsers import censysparser
+import censysparser
 from useragents import UserAgents
-
+import argparse
+try:
+    import simplejson as json
+except ImportError:
+    import json
+    
 class SearchNonApiCensys(object):
 
     def __init__(self, domain, limit):
-        self.word = word
+        self.domain = self.cleanDomain(domain)
         self.urlhost = ""
         self.urlcert = ""
         self.page = ""
@@ -19,6 +24,19 @@ class SearchNonApiCensys(object):
         self.limit = limit
         
         self.ua = UserAgents()
+    
+    def cleanDomain(self, domain):
+        """
+        @remove wwww.
+        """
+        # TODO: this is primitive way of getting rid of the protocol
+        #       needs a more advanced way.
+        
+        domain = domain.split(".")
+        if(len(domain) > 2):
+            domain.pop(0)
+            return '.'.join(domain)
+        return domain 
         
     def do_searchhosturl(self):
         try:
@@ -40,8 +58,8 @@ class SearchNonApiCensys(object):
 
     def process(self):
         try:
-            self.urlhost = 'https://' + self.server + '/ipv4/_search?q=' + str(self.word) + '&page=1'
-            self.urlcert = 'https://' + self.server + '/certificates/_search?q=' + str(self.word) + '&page=1'
+            self.urlhost = 'https://' + self.server + '/ipv4/_search?q=' + str(self.domain) + '&page=1'
+            self.urlcert = 'https://' + self.server + '/certificates/_search?q=' + str(self.domain) + '&page=1'
             self.do_searchhosturl()
             self.do_searchcertificateurl()
             counter = 2
@@ -54,9 +72,9 @@ class SearchNonApiCensys(object):
                 while counter <= totalpages:
                     try:
                         self.page = str(counter)
-                        self.urlhost = 'https://' + self.server + '/ipv4/_search?q=' + str(self.word) + '&page=' + str(
+                        self.urlhost = 'https://' + self.server + '/ipv4/_search?q=' + str(self.domain) + '&page=' + str(
                             self.page)
-                        print('\tSearching IP results page ' + self.page + '.')
+                        print('\tSearching IP results page [{0}]'.format(self.page))
                         self.do_searchhosturl()
                         counter += 1
                     except Exception as e:
@@ -65,7 +83,7 @@ class SearchNonApiCensys(object):
                 while counter <= pagestosearch:
                     try:
                         self.page = str(counter)
-                        self.urlhost = 'https://' + self.server + '/ipv4/_search?q=' + str(self.word) + '&page=' + str(
+                        self.urlhost = 'https://' + self.server + '/ipv4/_search?q=' + str(self.domain) + '&page=' + str(
                             self.page)
                         print(f'\tSearching results page {self.page}.')
                         self.do_searchhosturl()
@@ -81,7 +99,7 @@ class SearchNonApiCensys(object):
                     try:
                         self.page = str(counter)
                         self.urlhost = 'https://' + self.server + '/certificates/_search?q=' + str(
-                            self.word) + '&page=' + str(self.page)
+                            self.domain) + '&page=' + str(self.page)
                         print(f'\tSearching certificates results page {self.page}.')
                         self.do_searchcertificateurl()
                         counter += 1
@@ -91,14 +109,17 @@ class SearchNonApiCensys(object):
                 while counter <= pagestosearch:
                     try:
                         self.page = str(counter)
-                        self.urlhost = 'https://' + self.server + '/ipv4/_search?q=' + str(self.word) + '&page=' + str(
+                        self.urlhost = 'https://' + self.server + '/ipv4/_search?q=' + str(self.domain) + '&page=' + str(
                             self.page)
                         print('\tSearching IP results page ' + self.page + '.')
                         self.do_searchhosturl()
                         counter += 1
                     except Exception as e:
                         print(f'Error occurred in the Censys module requesting the pages: {e}')
-
+            
+            # Space in terminal display
+            print("\n")
+            
         except Exception as e:
             print(f'Error occurred in the main Censys module: {e}')
 
@@ -114,10 +135,32 @@ class SearchNonApiCensys(object):
                     domainsfromcensys.append(jdata)
                 else:
                     pass
-            matchingdomains = [s for s in domainsfromcensys if str(self.word) in s]
+                    
+            matchingdomains = [s for s in domainsfromcensys if str(self.domain) in s]
             self.hostnamesall.extend(matchingdomains)
             hostnamesfromcerts = censysparser.Parser(self)
             self.hostnamesall.extend(hostnamesfromcerts.search_hostnamesfromcerts())
-            return self.hostnamesall
+
+            return list(set(self.hostnamesall)) # Filters unique values
+            
         except Exception as e:
             print(f'Error occurred in the Censys module - hostname search: {e}')
+    
+    def get_ipaddresses(self):
+        try:
+            ips = censysparser.Parser(self)
+            self.ips = ips.search_ipaddresses()
+            return self.ips
+        except Exception as e:
+            print(f'Error occurred in the main Censys module - IP address search: {e}')
+            
+if __name__=="__main__":
+    parser = argparse.ArgumentParser(prog="None censys subdomain finder")
+    parser.add_argument('-d', '--d', help='Help', required=True)
+    parser.add_argument('-l', '--l', help='Limit', type=int, required=False, default=500)
+    args = parser.parse_args()
+    
+    cen  = SearchNonApiCensys(args.d, args.l)
+    cen.process()
+    subdomains = cen.get_subdomains()
+    print(subdomains)

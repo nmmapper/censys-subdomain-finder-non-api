@@ -16,10 +16,20 @@ Part of this code is taken from theharvester as it currently uses the none api a
 ```sh
 $ pip3 install -r requirements.txt
 ```
+```sh
+$ python3 censys_subdomain_finder.py  -d nmmapper.com
+	Searching certificates results page 2.
+	Searching certificates results page 3.
+	Searching certificates results page 4.
+	Searching certificates results page 5.
 
+['p352931.nmmapper.com', 'celery.nmmapper.com', 'upstream.d.nmmapper.com', 'nmmapper.com', 'p0-cdn.nmmapper.com', 'p352931-cdn.nmmapper.com', 'mail.nmmapper.com', '*.nmmapper.com', 'wss.nmmapper.com', 'goaccess.nmmapper.com', 'd1.nmmapper.com', 'www.nmmapper.com', 'p352931.goaccess.nmmapper.com', 'clk.nmmapper.com', 'analytics.nmmapper.com', 'upstream.nmmapper.com']
+```
 
-
-
+Limiting the query with 
+```sh
+$ python3 censys_subdomain_finder.py  --d nmmapper.com  -l 2000
+```
 
 
 

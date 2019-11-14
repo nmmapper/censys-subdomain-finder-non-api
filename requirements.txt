@@ -2,4 +2,4 @@ beautifulsoup4
 censys
 dnspython
 requests
-
+simplejson
