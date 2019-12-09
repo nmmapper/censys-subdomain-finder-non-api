@@ -32,10 +32,11 @@ class SearchNonApiCensys(object):
         # TODO: this is primitive way of getting rid of the protocol
         #       needs a more advanced way.
         
-        domain = domain.split(".")
-        if(len(domain) > 2):
-            domain.pop(0)
-            return '.'.join(domain)
+        if("www." in domain):
+            domain = domain.split(".")
+            if(len(domain) > 2):
+                domain.pop(0)
+                return '.'.join(domain)
         return domain 
         
     def do_searchhosturl(self):
@@ -62,10 +63,12 @@ class SearchNonApiCensys(object):
             self.urlcert = 'https://' + self.server + '/certificates/_search?q=' + str(self.domain) + '&page=1'
             self.do_searchhosturl()
             self.do_searchcertificateurl()
+            
             counter = 2
             pages = censysparser.Parser(self)
             totalpages = pages.search_totalpageshosts()
             pagestosearch = int(self.limit / 25)  # 25 results/page
+            
             if totalpages is None:
                 totalpages = 0
             if totalpages <= pagestosearch:
@@ -90,10 +93,12 @@ class SearchNonApiCensys(object):
                         counter += 1
                     except Exception as e:
                         print(f'Error occurred in the Censys module requesting the pages: {e}')
+                        
             counter = 2
             totalpages = pages.search_totalpagescerts()
             if totalpages is None:
                 totalpages = 0
+                
             if totalpages <= pagestosearch:
                 while counter <= totalpages:
                     try:
