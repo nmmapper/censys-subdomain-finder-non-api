@@ -168,4 +168,4 @@ if __name__=="__main__":
     cen  = SearchNonApiCensys(args.d, args.l)
     cen.process()
     subdomains = cen.get_subdomains()
-    print(subdomains)
+    print(json.dumps(subdomains, indent=4, sort_keys=True))
