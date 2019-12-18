@@ -6,7 +6,8 @@ try:
     import simplejson as json
 except ImportError:
     import json
-    
+import socket 
+
 class SearchNonApiCensys(object):
 
     def __init__(self, domain, limit):
@@ -146,7 +147,16 @@ class SearchNonApiCensys(object):
             hostnamesfromcerts = censysparser.Parser(self)
             self.hostnamesall.extend(hostnamesfromcerts.search_hostnamesfromcerts())
 
-            return list(set(self.hostnamesall)) # Filters unique values
+            subdomains =  list(set(self.hostnamesall)) # Filters unique values
+            subdomain_dict = []
+            
+            for sub in subdomains:
+                subdomain_dict.append({
+                    "subdomain":sub,
+                    "ip":self.resolve_ip(sub),
+                    "domain":self.domain
+                })
+            return subdomain_dict
             
         except Exception as e:
             print(f'Error occurred in the Censys module - hostname search: {e}')
@@ -158,6 +168,15 @@ class SearchNonApiCensys(object):
             return self.ips
         except Exception as e:
             print(f'Error occurred in the main Censys module - IP address search: {e}')
+    
+    def resolve_ip(self, host):
+        """
+        @ given the host return the IP
+        """
+        try:
+            return socket.gethostbyname(host)
+        except socket.gaierror:
+            return "404"
             
 if __name__=="__main__":
     parser = argparse.ArgumentParser(prog="None censys subdomain finder")
