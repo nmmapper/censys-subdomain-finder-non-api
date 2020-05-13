@@ -1,14 +1,11 @@
 
+
 # censys-subdomain-finder-none-api
-Using censys to [find subdomains](https://www.nmmapper.com/sys/tools/subdomainfinder/) but without the APIs. Censys is a a known service offering lots of information on a variety of networks. That is what we use on our online service, only if we have hit the limit given to us. Thanks to Censys search.
+Using censys to find subdomains but without the APIs. Censys is a a known service offering lots of information on a variety of networks. That is what we use on our online service, only if we have hit the limit given to us. Thanks to Censys search.
 
 [![N|Solid](https://www.nmmapper.com/static/img/logo.png)](https://www.nmmapper.com/sys/tools/subdomainfinder/)
 
-Part of this code is taken from theharvester as it currently uses the none api approach.
-- [theHarvester online](https://www.nmmapper.com/kalitools/theharvester/email-harvester-tool/online/)
-
-- [theHarvester repo](https://github.com/laramies/theHarvester)
-- [Censys is hosted online](https://www.nmmapper.com/sys/tools/subdomainfinder/)
+Part of this code is taken from theharvester as it currently uses the none api approach.- [theHarvester online](https://www.nmmapper.com/kalitools/theharvester/email-harvester-tool/online/)
 
 # Dependencies!
    - beautifulsoup4
@@ -50,10 +47,3 @@ Limiting the query with
 ```sh
 $ python3 censys_subdomain_finder.py  --d nmmapper.com  -l 2000
 ```
-### Cross-Selling
-If you like this project you might also be interested in
-* [Dnsdumpster](https://github.com/wangoloj/dnsdumpster)
-* [Python3-nmap](https://github.com/wangoloj/python3-nmap)
-* [Spyse subdomain finder](https://github.com/wangoloj/spyse-subdomain-finder)
-* [8 Online subdomain finder tool](https://www.nmmapper.com/sys/tools/subdomainfinder/) 
-
